@@ -1,31 +1,33 @@
 # Reboot Timeline Analyzer
 
-A Zsh script that parses macOS's `last` log to display a timeline of system reboots, classifying them as **intentional** (if preceded by a shutdown), and calculating the **implied uptime** between each reboot and the next.
+A Zsh script that parses macOS's `last` log to display a timeline of system reboots, classifying them as **intentional** (if preceded by a shutdown), and calculating the **implied uptime** between reboots.
 
 ## Features
 
-- ✅ Labels reboots as `[intentional]` if they immediately follow a logged shutdown
-- ✅ Assumes reboots are **unintentional** by default unless tagged
-- ✅ Calculates **implied system uptime** as the duration between one reboot and the next
-- ✅ Shows full timestamp (`Mon Jan 1 HH:MM`) of each reboot
-- ✅ Output is aligned and easy to scan
+- ✅ Labels reboots as `[intentional]` if they follow a clean shutdown
+- ✅ Omits labels for unintentional reboots, keeping the output minimal
+- ✅ Calculates uptime as the time between one reboot and the next
+- ✅ Properly handles year rollovers (e.g. Dec 2024 → Jan 2025)
+- ✅ Ensures dates like `Mar 03` and `Apr 26` align visually
+- ✅ Clean, single-line output format with tags and uptime aligned
 
 ## Example Output
 
 ```
 === Reboot Event Timeline ===
-Jun 15 00:01                 (0d 4h 16m uptime)
-Jun 14 19:45  [intentional]  (25d 11h 9m uptime)
-May 20 08:36  [intentional]  (8d 0h 2m uptime)
-May 12 10:05                 (0d 0h 3m uptime)
-May 12 10:02                 
+Jun 15 00:01     (0d 4h 16m uptime)
+Jun 14 19:45     [intentional] (25d 11h 9m uptime)
+May 20 08:36     [intentional] (7d 22h 31m uptime)
+May 12 10:05     (0d 0h 3m uptime)
+...
 ```
 
 ## How It Works
 
-- Parses `last` log entries for `reboot` and `shutdown`
-- Each reboot is tagged as `[intentional]` only if it's immediately preceded by a shutdown
-- Uptime is computed as the **difference between this reboot and the next one in time**, skipping over shutdown entries
+- Uses `last | grep -E 'shutdown|reboot'` to extract relevant events
+- Infers the year from current date and month transitions in the log
+- Tags only intentional reboots (those immediately following shutdown)
+- Prints the timestamp (with zero-padded day), optional `[intentional]` tag, and uptime
 
 ## Usage
 
@@ -42,14 +44,13 @@ May 12 10:02
 ## Requirements
 
 - macOS (tested on Sequoia 15.5)
-- Zsh (default on modern macOS)
-- Assumes timestamps in the `last` output are for the current calendar year
+- Zsh (default shell in macOS)
+- Assumes timestamps in the `last` output use current calendar year
 
 ## Limitations
 
-- If the `last` log includes reboots across December–January, uptime values may be off (as the year is inferred)
-- Requires access to `last` command (usually present on macOS)
-- Uptime is inferred and may differ slightly from real uptime due to sleep/hibernation
+- If `last` spans multiple years and months are omitted (rare), results could be off
+- Does not account for system sleep/hibernate — only reboot gaps
 
 ## License
 
