@@ -15,10 +15,10 @@ A Zsh script that parses macOS's `last` log to display a timeline of system rebo
 
 ```
 === Reboot Event Timeline ===
-Jun 15 00:01     (0d 4h 16m uptime)
-Jun 14 19:45     [intentional] (25d 11h 9m uptime)
-May 20 08:36     [intentional] (7d 22h 31m uptime)
-May 12 10:05     (0d 0h 3m uptime)
+Jun 15 00:01               (0d 4h 16m uptime)
+Jun 14 19:45 [intentional] (25d 11h 9m uptime)
+May 20 08:36 [intentional] (7d 22h 31m uptime)
+May 12 10:05               (0d 0h 3m uptime)
 ...
 ```
 
