@@ -8,6 +8,7 @@ A Zsh script that parses macOS's `last` log to display a timeline of system rebo
 - ✅ Labels reboots as `[intentional]` if they follow a clean shutdown
 - ✅ Calculates uptime as the time between one reboot and the next
 - ✅ Cross-references reboot timestamps with `softwareupdate --history` to identify nearby macOS updates
+- ✅ Displays **multiple software updates per reboot**, formatted as `[Update 1, Update 2]`
 - ✅ Removes redundant version numbers from update names for cleaner output
 - ✅ Properly handles year rollovers (e.g. Dec 2024 → Jan 2025)
 - ✅ Formats timestamps with aligned columns and padded spacing (e.g. `Mar 03`, `Apr 26`)
@@ -20,7 +21,7 @@ A Zsh script that parses macOS's `last` log to display a timeline of system rebo
 Jun 15 00:01                 ( 0d  4h 16m uptime)
 Jun 14 19:45   [intentional] (25d 11h  9m uptime)
 May 20 08:36   [intentional] ( 7d 22h 31m uptime)  [macOS Sequoia 15.5]
-Apr 26 12:48   [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode 16.3]
+Apr 26 12:48   [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode 16.3, macOS Sequoia 15.4.1]
 ...
 ```
 
@@ -30,8 +31,9 @@ Apr 26 12:48   [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode
 - Determines if a reboot was preceded by a shutdown (marking it `[intentional]`)
 - Infers year transitions by monitoring month rollovers
 - Calls `softwareupdate --history` to pull all updates and timestamps
-- Matches each reboot timestamp to nearby updates (within 10 minutes)
+- Matches each reboot timestamp to all nearby updates (within 10 minutes)
 - Omits version numbers from update names when they are already embedded in the title
+- Joins multiple updates as a comma-separated list in square brackets
 
 ## Usage
 
