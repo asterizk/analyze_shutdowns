@@ -102,14 +102,29 @@ for ((i=0; i<${#types[@]}; i++)); do
     # Match closest software update
     swu_label=""
     curr_epoch=${epochs[$i]}
+    swu_updates=()
     for ((k=0; k<${#update_epochs[@]}; k++)); do
       delta=$((curr_epoch - update_epochs[$k]))
       if (( delta >= 0 && delta <= 600 )); then
-        swu_label="[${update_names[$k]}]"
-        break
+        swu_updates+=("${update_names[$k]}")
       fi
     done
 
+    if (( ${#swu_updates[@]} > 0 )); then
+      if (( ${#swu_updates[@]} > 0 )); then
+      swu_label="["
+      for swu in "${swu_updates[@]}"; do
+        if [[ "$swu_label" == "[" ]]; then
+          swu_label+="$swu"
+        else
+          swu_label+=", $swu"
+        fi
+      done
+      swu_label+="]"
+    else
+      swu_label=""
+    fi
+    fi
     printf "%-13s %-13s %-21s %s\n" "${times[$i]}" "$label" "$uptime" "$swu_label"
   fi
 done
