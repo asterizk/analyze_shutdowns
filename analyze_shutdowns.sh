@@ -53,6 +53,29 @@ for line in "${entries[@]}"; do
   epochs+=("$epoch")
 done
 
+# Fetch and parse software update history
+update_lines=("${(@f)$(softwareupdate --history | tail -n +2)}")
+update_epochs=()
+update_names=()
+
+for line in "${update_lines[@]}"; do
+  name=$(echo "$line" | awk -F'  +' '{print $1}')
+  version=$(echo "$line" | awk -F'  +' '{print $2}')
+  date_str=$(echo "$line" | awk -F'  +' '{print $3}' | sed 's/,//g')
+  time_str=$(echo "$line" | awk -F'  +' '{print $4}')
+  datetime_str="$date_str $time_str"
+  update_epoch=$(date -j -f "%m/%d/%Y %H:%M:%S" "$datetime_str" "+%s" 2>/dev/null)
+  if [[ -n "$update_epoch" ]]; then
+    if [[ "$name" == *"$version" ]]; then
+      update_label="$name"
+    else
+      update_label="$name $version"
+    fi
+    update_names+=("$update_label")
+    update_epochs+=("$update_epoch")
+  fi
+done
+
 echo "=== Reboot Event Timeline ==="
 
 for ((i=0; i<${#types[@]}; i++)); do
@@ -70,14 +93,23 @@ for ((i=0; i<${#types[@]}; i++)); do
           days=$((diff / 86400))
           hours=$(( (diff % 86400) / 3600 ))
           mins=$(( (diff % 3600) / 60 ))
-          uptime="(${days}d ${hours}h ${mins}m uptime)"
+          uptime=$(printf "(%2dd %2dh %2dm uptime)" $days $hours $mins)
         fi
         break
       fi
     done
 
-    printf "%-10s %-13s %s\n" "${times[$i]}" "$label" "$uptime"
+    # Match closest software update
+    swu_label=""
+    curr_epoch=${epochs[$i]}
+    for ((k=0; k<${#update_epochs[@]}; k++)); do
+      delta=$((curr_epoch - update_epochs[$k]))
+      if (( delta >= 0 && delta <= 600 )); then
+        swu_label="[${update_names[$k]}]"
+        break
+      fi
+    done
 
+    printf "%-13s %-13s %-21s %s\n" "${times[$i]}" "$label" "$uptime" "$swu_label"
   fi
 done
-
