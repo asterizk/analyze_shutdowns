@@ -5,18 +5,13 @@ A Zsh script that parses macOS's `last` log to display a timeline of system rebo
 
 ## Features
 
-- ✅ Labels reboots as `[intentional]` if they follow a clean shutdown
+- ✅ Labels reboots as `[intentional]` if triggered by user
 - ✅ Calculates uptime as the time between one reboot and the next
 - ✅ Cross-references reboot timestamps with `softwareupdate --history` to identify nearby macOS updates
 - ✅ Displays **multiple software updates per reboot**, formatted as `[Update 1, Update 2]`
 - ✅ Removes redundant version numbers from update names for cleaner output
 - ✅ Properly handles year rollovers (e.g. Dec 2024 → Jan 2025)
-- ✅ Formats timestamps with aligned columns and padded spacing (e.g. `Mar 03`, `Apr 26`)
-- ✅ Clean, single-line output format with tags, uptime, and update info aligned
-
-+ - ✅ Ignores non-event lines by matching only those **starting** with `reboot`/`shutdown`
-+ - ✅ Robust parsing for `softwareupdate --history` when date & time are in a **single field**
-+ - ✅ Configurable time window for matching reboots to updates (`MATCH_WINDOW_SEC`, default 1800s)
+- ✅ Configurable time window for matching reboots to updates (`MATCH_WINDOW_SEC`, default 1800s)
 
 ## Example Output
 
@@ -33,7 +28,7 @@ Apr 26 12:48   [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode
 ## How It Works
 
 - Uses `last | grep -E '^(reboot|shutdown)'` to extract reboot and shutdown events only
-- Determines if a reboot was preceded by a shutdown (marking it `[intentional]`)
+- Determines if a reboot was preceded by a clean shutdown (marking it `[intentional]`)
 - Infers year transitions by monitoring month rollovers
 - Calls `softwareupdate --history` to pull all updates and timestamps, accepting either:
   - combined `MM/DD/YYYY, HH:MM:SS` in one column, or
