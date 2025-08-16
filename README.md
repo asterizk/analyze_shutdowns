@@ -20,7 +20,7 @@ A Zsh script that parses macOS's `last` log to display a timeline of system rebo
 Jun 15 00:01                 ( 0d  4h 16m uptime)
 Jun 14 19:45   [intentional] (25d 11h  9m uptime)
 May 20 08:36   [intentional] ( 7d 22h 31m uptime)  [macOS Sequoia 15.5]
-+Aug 02 11:49   [intentional] (28d  3h 36m uptime)  [macOS Sequoia 15.6]
+Aug 02 11:49   [intentional] (28d  3h 36m uptime)  [macOS Sequoia 15.6]
 Apr 26 12:48   [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode 16.3, macOS Sequoia 15.4.1]
 ...
 ```
