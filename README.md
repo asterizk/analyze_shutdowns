@@ -17,11 +17,15 @@ A Zsh script that parses macOS's `last` log to display a timeline of system rebo
 
 ```
 === Reboot Event Timeline ===
-Jun 15 00:01                 ( 0d  4h 16m uptime)
-Jun 14 19:45   [intentional] (25d 11h  9m uptime)
-May 20 08:36   [intentional] ( 7d 22h 31m uptime)  [macOS Sequoia 15.5]
-Aug 02 11:49   [intentional] (28d  3h 36m uptime)  [macOS Sequoia 15.6]
-Apr 26 12:48   [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode 16.3, macOS Sequoia 15.4.1]
+Aug 16 00:42                (13d 12h 53m uptime)
+Aug 02 11:49  [intentional] (28d  3h 36m uptime)  [macOS Sequoia 15.6]
+Jul 05 08:13  [intentional] (20d  8h 12m uptime)
+Jun 15 00:01                ( 0d  4h 15m uptime)
+Jun 14 19:45  [intentional] (25d 11h  9m uptime)
+May 20 08:36  [intentional] ( 7d 22h 31m uptime)  [macOS Sequoia 15.5]
+May 12 10:05                ( 0d  0h  3m uptime)
+May 12 10:02                (15d 21h 14m uptime)
+Apr 26 12:48  [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode 16.3, macOS Sequoia 15.4.1]
 ...
 ```
 
