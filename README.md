@@ -3,16 +3,6 @@
 
 A Zsh script that parses macOS's `last` log to display a timeline of system reboots, classifying them as **intentional** (if preceded by a shutdown), and calculating the **implied uptime** between reboots.
 
-## Features
-
-- ✅ Labels reboots as `[intentional]` if triggered by user
-- ✅ Calculates uptime as the time between one reboot and the next
-- ✅ Cross-references reboot timestamps with `softwareupdate --history` to identify nearby macOS updates
-- ✅ Displays **multiple software updates per reboot**, formatted as `[Update 1, Update 2]`
-- ✅ Removes redundant version numbers from update names for cleaner output
-- ✅ Properly handles year rollovers (e.g. Dec 2024 → Jan 2025)
-- ✅ Configurable time window for matching reboots to updates (`MATCH_WINDOW_SEC`, default 1800s)
-
 ## Example Output
 
 ```
@@ -29,17 +19,15 @@ Apr 26 12:48  [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode 
 ...
 ```
 
-## How It Works
+## Features
 
-- Uses `last | grep -E '^(reboot|shutdown)'` to extract reboot and shutdown events only
-- Determines if a reboot was preceded by a clean shutdown (marking it `[intentional]`)
-- Infers year transitions by monitoring month rollovers
-- Calls `softwareupdate --history` to pull all updates and timestamps, accepting either:
-  - combined `MM/DD/YYYY, HH:MM:SS` in one column, or
-  - date and time split across adjacent columns
-- Matches each reboot timestamp to all nearby updates (within `MATCH_WINDOW_SEC`, default 30 minutes)
-- Omits version numbers from update names when they are already embedded in the title
-- Joins multiple updates as a comma-separated list in square brackets
+- ✅ Labels reboots as `[intentional]` if triggered by user
+- ✅ Calculates uptime as the time between one reboot and the next
+- ✅ Cross-references reboot timestamps with `softwareupdate --history` to identify nearby macOS updates
+- ✅ Displays **multiple software updates per reboot**, formatted as `[Update 1, Update 2]`
+- ✅ Removes redundant version numbers from update names for cleaner output
+- ✅ Properly handles year rollovers (e.g. Dec 2024 → Jan 2025)
+- ✅ Configurable time window for matching reboots to updates (`MATCH_WINDOW_SEC`, default 1800s)
 
 ## Usage
 
@@ -48,18 +36,10 @@ Apr 26 12:48  [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode 
    ```bash
    chmod +x analyze_shutdowns.sh
    ```
-+4. (Optional) Adjust the match window:
-+   ```bash
-+   MATCH_WINDOW_SEC=1800 ./analyze_shutdowns.sh   # 30 minutes
-+   ```
 3. Run it in a Zsh shell:
    ```bash
    ./analyze_shutdowns.sh
    ```
-+4. (Optional) Adjust the match window:
-+   ```bash
-+   MATCH_WINDOW_SEC=1800 ./analyze_shutdowns.sh   # 30 minutes
-+   ```
 
 ## Requirements
 
@@ -72,16 +52,28 @@ Apr 26 12:48  [intentional] ( 0d 12h 42m uptime)  [Command Line Tools for Xcode 
 - Only considers system-level software updates from `softwareupdate` (not App Store apps)
 - Requires recent log retention — `last` may truncate very old data
 - Assumes that time zone and system clock were consistent over the observed timeline
-+ - Parsing is sensitive to locale/date formatting; ensure `softwareupdate --history` prints
-+   dates as `MM/DD/YYYY, HH:MM:SS` or the classic split columns. If your locale differs,
-+   you may need to adjust the `date -j -f` format string.
+- Parsing is sensitive to locale/date formatting; ensure `softwareupdate --history` prints
+  dates as `MM/DD/YYYY, HH:MM:SS` or the classic split columns. If your locale differs,
+  you may need to adjust the `date -j -f` format string.
+
+## How It Works
+
+- Uses `last | grep -E '^(reboot|shutdown)'` to extract reboot and shutdown events only
+- Determines if a reboot was preceded by a clean shutdown (marking it `[intentional]`)
+- Infers year transitions by monitoring month rollovers
+- Calls `softwareupdate --history` to pull all updates and timestamps, accepting either:
+  - combined `MM/DD/YYYY, HH:MM:SS` in one column, or
+  - date and time split across adjacent columns
+- Matches each reboot timestamp to all nearby updates (within `MATCH_WINDOW_SEC`, default 30 minutes)
+- Omits version numbers from update names when they are already embedded in the title
+- Joins multiple updates as a comma-separated list in square brackets
 
 ## License
 
 MIT License — feel free to modify or reuse.
 
 ## Troubleshooting
-- **No updates ever match:** increase `MATCH_WINDOW_SEC` (e.g., 1800) to account for reboots
+- **No updates ever match:** increase `MATCH_WINDOW_SEC` (e.g., 3600) to account for reboots
   that happen well after the update finishes.
 - **Weird/empty dates:** run `softwareupdate --history | sed -n '1,5p'` to inspect actual
   column layout and date format on your system, then adjust parsing if needed.
